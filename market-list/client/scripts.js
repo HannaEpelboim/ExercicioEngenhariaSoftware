@@ -131,14 +131,45 @@ const refreshElement = () => {
   for (i = 0; i < refresh.length; i++) {
     refresh[i].onclick = function () {
       let div = this.parentElement.parentElement;
-      const nomeItem = div.getElementsByTagName('td')[0].innerHTML
-      if (confirm("Você tem certeza?")) {
-        div.remove()
-        deleteItem(nomeItem)
-        alert("Removido!")
-      }
+      const oldName = div.getElementsByTagName('td')[0].innerHTML
+      const oldQuantity = div.getElementsByTagName('td')[1].innerHTML
+      const oldPrice = div.getElementsByTagName('td')[2].innerHTML
+      const [newName, newQuantity, newPrice] = AtualizarDados(oldName, oldQuantity, oldPrice)
+      div.getElementsByTagName('td')[0].innerHTML = newName;
+      div.getElementsByTagName('td')[1].innerHTML = newQuantity;
+      div.getElementsByTagName('td')[2].innerHTML = newPrice;
+      updateItem(oldName, newName, newQuantity, newPrice)
+      alert("Atualizado!")
+    
     }
   }
+}
+
+/*Funcao para via alert perguntar se deseja atualizar*/ 
+const AtualizarDados = (oldName, oldQuantity, oldPrice) => {
+  let newName;
+  let newQuantity;
+  let newPrice;
+  if (confirm("Nome atual: " + oldName + "\nDeseja mudar?")) {
+    newName = prompt("Atualize o nome do produto:", oldName);
+  }
+  else{
+    newName = oldName;
+  }
+  if (confirm("Quantidade atual: " + oldQuantity + "\nDeseja mudar?")) {
+    newQuantity = prompt("Atualize a quantidade:", oldQuantity);
+  }
+  else{
+    newQuantity = oldQuantity;
+  }
+  if (confirm("Valor atual: " + oldPrice + "\nDeseja mudar?")) {
+    newPrice = prompt("Atualize o valor:", oldPrice);
+  }
+  else{
+    newPrice = oldPrice;
+  }
+  
+  return [newName, newQuantity, newPrice]
 }
 
 /*
@@ -146,12 +177,17 @@ const refreshElement = () => {
   Função para atualizar um item da lista do servidor via requisição PUT
   --------------------------------------------------------------------------------------
 */
-const updateItem = (item) => {
-  console.log(item)
-  let url = 'http://127.0.0.1:5000/produto?nome=' + item;
+const updateItem = (oldName, newName, newQuantity, newPrice) => {
+  console.log(oldName, newName, newQuantity, newPrice)
+  const formData = new FormData();
+  formData.append('nome', newName);
+  formData.append('quantidade', newQuantity);
+  formData.append('valor', newPrice);
+  let url = 'http://127.0.0.1:5000/produto?nome=' + oldName;
   fetch(url, {
-    method: 'put'
-  })
+    method: 'put',
+    body: formData
+  })  
     .then((response) => response.json())
     .catch((error) => {
       console.error('Error:', error);
