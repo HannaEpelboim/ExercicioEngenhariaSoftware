@@ -107,6 +107,62 @@ const deleteItem = (item) => {
 
 /*
   --------------------------------------------------------------------------------------
+  Função para criar um botão Editar para cada item da lista
+  --------------------------------------------------------------------------------------
+*/
+const insertButtonRefresh = (parent) => {
+  let span = document.createElement("span");
+  let txt = document.createTextNode("Editar");
+  span.className = "refresh";
+  span.appendChild(txt);
+  parent.appendChild(span);
+}
+
+
+/*
+  --------------------------------------------------------------------------------------
+  Função para atualizar um item da lista de acordo com o click no botão refresh
+  --------------------------------------------------------------------------------------
+*/
+const refreshElement = () => {
+  let refresh = document.getElementsByClassName("refresh");
+  // var table = document.getElementById('myTable');
+  let i;
+  for (i = 0; i < refresh.length; i++) {
+    refresh[i].onclick = function () {
+      let div = this.parentElement.parentElement;
+      const nomeItem = div.getElementsByTagName('td')[0].innerHTML
+      if (confirm("Você tem certeza?")) {
+        div.remove()
+        deleteItem(nomeItem)
+        alert("Removido!")
+      }
+    }
+  }
+}
+
+/*
+  --------------------------------------------------------------------------------------
+  Função para atualizar um item da lista do servidor via requisição PUT
+  --------------------------------------------------------------------------------------
+*/
+const updateItem = (item) => {
+  console.log(item)
+  let url = 'http://127.0.0.1:5000/produto?nome=' + item;
+  fetch(url, {
+    method: 'put'
+  })
+    .then((response) => response.json())
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+}
+
+
+
+
+/*
+  --------------------------------------------------------------------------------------
   Função para adicionar um novo item com nome, quantidade e valor 
   --------------------------------------------------------------------------------------
 */
@@ -141,9 +197,11 @@ const insertList = (nameProduct, quantity, price) => {
     cel.textContent = item[i];
   }
   insertButton(row.insertCell(-1))
+  insertButtonRefresh(row.insertCell(-1))
   document.getElementById("newInput").value = "";
   document.getElementById("newQuantity").value = "";
   document.getElementById("newPrice").value = "";
 
   removeElement()
+  refreshElement()
 }
