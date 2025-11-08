@@ -107,7 +107,7 @@ const deleteItem = (item) => {
 
 /*
   --------------------------------------------------------------------------------------
-  Função para criar um botão refresh para cada item da lista
+  Função para criar um botão Editar para cada item da lista
   --------------------------------------------------------------------------------------
 */
 const insertButtonRefresh = (parent) => {
